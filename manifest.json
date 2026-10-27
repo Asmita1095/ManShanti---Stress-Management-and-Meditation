@@ -1,0 +1,13 @@
+
+{
+  "name": "ManShanti - Stress Management & Meditation",
+  "short_name": "ManShanti",
+  "description": "A multilingual app for meditation, breathing exercises, and stress management.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7f2",
+  "theme_color": "#47745b",
+  "orientation": "portrait",
+  "lang": "en"
+}
