@@ -1,2 +1,324 @@
 # ManShanti - Stress-Management-and-Meditation
 ManShanti is a multilingual stress management and meditation app offering guided meditation, breathing exercises, stress check-ins, and relaxation routines in Gujarati, Hindi, and English for everyday mental well-being.
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#416b50">
+<meta name="description" content="ManShanti: free multilingual meditation, breathing and everyday stress management resources.">
+<title>ManShanti | Mindful Living</title>
+<style>
+:root{--green:#416b50;--light:#edf4eb;--cream:#faf8f1;--ink:#24352a;--muted:#657568;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Gujarati","Noto Sans Devanagari",sans-serif;line-height:1.6}
+header{background:var(--green);color:white;padding:20px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-size:1.5rem;font-weight:800;letter-spacing:.3px}
+.brand small{display:block;font-size:.8rem;font-weight:400;opacity:.9}
+select,button,input{font:inherit}
+select{padding:9px;border-radius:10px;border:1px solid #d5dfd4;background:white;color:#24352a}
+main{max-width:1000px;margin:auto;padding:22px 16px 44px}
+.hero{padding:34px 24px;border-radius:22px;background:linear-gradient(135deg,#e3efdf,#f8f2df);text-align:center}
+.hero .lotus{font-size:2.5rem}
+h1{font-size:clamp(1.8rem,5vw,2.7rem);line-height:1.2;margin:8px 0}
+h2{font-size:1.25rem;margin-top:0}
+p{margin:8px 0}
+.subtitle{color:#4e6351}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:16px;margin-top:18px}
+.card{background:white;border:1px solid #e2e8dd;border-radius:18px;padding:20px;box-shadow:0 4px 16px #263a2710}
+button{cursor:pointer;border:0;border-radius:11px;padding:10px 15px;background:var(--green);color:white;font-weight:650}
+button.secondary{background:var(--light);color:var(--green);border:1px solid #d7e5d3}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #e5b95f;outline-offset:2px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.timer{text-align:center;font-size:2.6rem;font-weight:750;font-variant-numeric:tabular-nums;margin:14px}
+.breath-circle{width:132px;height:132px;border-radius:50%;margin:18px auto;background:#d8ead4;border:3px solid #9bbd95;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--green);font-weight:750;transition:transform 1s ease}
+.breath-circle.inhale{transform:scale(1.18)}
+.breath-circle.exhale{transform:scale(.82)}
+input[type=range]{width:100%;accent-color:var(--green)}
+.scale{display:flex;justify-content:space-between;color:var(--muted);font-size:.85rem}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 0}
+.check input{margin-top:7px;accent-color:var(--green);width:18px;height:18px}
+.status{color:var(--muted);font-size:.9rem;min-height:1.5em}
+footer{text-align:center;color:var(--muted);font-size:.88rem;padding:24px 10px}
+.note{background:#fff6df;padding:12px 14px;border-radius:12px;font-size:.9rem}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">🪷 ManShanti <small data-i="brandSub">Stress Management & Meditation</small></div>
+  <label>
+    <span class="hidden" data-i="language">Language</span>
+    <select id="language" aria-label="Choose language">
+      <option value="gu">ગુજરાતી</option>
+      <option value="hi">हिन्दी</option>
+      <option value="en">English</option>
+    </select>
+  </label>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="lotus" aria-hidden="true">🪷</div>
+    <h1 data-i="welcome">શાંત મન, સુખી જીવન</h1>
+    <p class="subtitle" data-i="intro">Take a mindful pause. Breathe gently. Make space for calm.</p>
+    <p data-i="daily">A little time for yourself can make a difference.</p>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>🧘 <span data-i="medTitle">ધ્યાન / Meditation</span></h2>
+      <p data-i="medDesc">Take five minutes to sit comfortably and focus on your breathing.</p>
+      <div class="timer" id="timer" role="timer" aria-live="off">05:00</div>
+      <div class="actions">
+        <button id="startMeditation" data-i="start">Start</button>
+        <button id="resetMeditation" class="secondary" data-i="reset">Reset</button>
+      </div>
+      <p class="status" id="medStatus" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>🌬️ <span data-i="breathTitle">શ્વાસનો અભ્યાસ / Breathing</span></h2>
+      <p data-i="breathDesc">Follow the circle. Breathe comfortably without forcing your breath.</p>
+      <div id="breathCircle" class="breath-circle" aria-live="polite">
+        <span id="breathLabel">Ready</span>
+      </div>
+      <p id="breathInstruction" class="status" style="text-align:center"></p>
+      <div class="actions">
+        <button id="startBreathing" data-i="startBreath">Start breathing</button>
+        <button id="stopBreathing" class="secondary" data-i="stop">Stop</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>💚 <span data-i="checkTitle">મારી લાગણી / Stress check-in</span></h2>
+      <p data-i="checkDesc">How stressed do you feel right now?</p>
+      <label for="stressRange"><strong><span data-i="stressLevel">Stress level</span>: <span id="stressValue">5</span>/10</strong></label>
+      <input id="stressRange" type="range" min="0" max="10" value="5">
+      <div class="scale"><span data-i="low">Calm (0)</span><span data-i="high">Very stressed (10)</span></div>
+      <div class="actions">
+        <button id="saveCheckin" data-i="save">Save check-in</button>
+      </div>
+      <p class="status" id="checkStatus" aria-live="polite"></p>
+      <p class="status" id="lastCheck"></p>
+    </section>
+
+    <section class="card">
+      <h2>🌱 <span data-i="routineTitle">દૈનિક શાંતિ / Daily calm routine</span></h2>
+      <p data-i="routineDesc">Choose small, manageable steps for today.</p>
+      <div class="check"><input type="checkbox" id="task1"><label for="task1" data-i="task1">Take five mindful breaths</label></div>
+      <div class="check"><input type="checkbox" id="task2"><label for="task2" data-i="task2">Take a short walk or stretch</label></div>
+      <div class="check"><input type="checkbox" id="task3"><label for="task3" data-i="task3">Take a break from screens</label></div>
+      <div class="check"><input type="checkbox" id="task4"><label for="task4" data-i="task4">Connect with someone you trust</label></div>
+      <p class="status" id="routineStatus" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:18px">
+    <h2>ℹ️ <span data-i="aboutTitle">About ManShanti</span></h2>
+    <p data-i="aboutText">ManShanti offers simple wellness activities for everyday life. Progress is personal; there is no need to do everything perfectly.</p>
+    <div class="note"><strong data-i="safetyTitle">A gentle reminder</strong><br><span data-i="safetyText">This app provides general wellness education, not diagnosis or treatment. If stress is persistent or overwhelming, consider speaking with a qualified mental health professional. If you are in immediate danger, contact local emergency services.</span></div>
+  </section>
+</main>
+
+<footer>
+  <p>🪷 ManShanti</p>
+  <p data-i="footer">Small steps. Gentle breaths. A little more calm.</p>
+</footer>
+
+<script>
+const translations = {
+en:{
+brandSub:"Stress Management & Meditation",language:"Language",
+welcome:"A calm mind, a happier life",intro:"Take a mindful pause. Breathe gently. Make space for calm.",
+daily:"A little time for yourself can make a difference.",
+medTitle:"Meditation",medDesc:"Take five minutes to sit comfortably and focus on your breathing.",
+start:"Start",pause:"Pause",resume:"Resume",reset:"Reset",
+medRunning:"Your quiet moment has started.",medPaused:"Meditation paused.",medDone:"Five minutes complete. Well done for taking time for yourself.",medReset:"Timer reset.",
+breathTitle:"Breathing practice",breathDesc:"Follow the circle. Breathe comfortably without forcing your breath.",
+ready:"Ready",inhale:"Breathe in gently",exhale:"Breathe out gently",startBreath:"Start breathing",stop:"Stop",
+breathStopped:"Breathing practice stopped.",checkTitle:"Stress check-in",checkDesc:"How stressed do you feel right now?",stressLevel:"Stress level",low:"Calm (0)",high:"Very stressed (10)",save:"Save check-in",
+saved:"Your check-in was saved on this device.",last:"Last saved: ",none:"No check-in saved yet.",
+routineTitle:"Daily calm routine",routineDesc:"Choose small, manageable steps for today.",
+task1:"Take five mindful breaths",task2:"Take a short walk or stretch",task3:"Take a break from screens",task4:"Connect with someone you trust",
+routineProgress:"Today's steps completed: ",aboutTitle:"About ManShanti",
+aboutText:"ManShanti offers simple wellness activities for everyday life. Progress is personal; there is no need to do everything perfectly.",
+safetyTitle:"A gentle reminder",safetyText:"This app provides general wellness education, not diagnosis or treatment. If stress is persistent or overwhelming, consider speaking with a qualified mental health professional. If you are in immediate danger, contact local emergency services.",
+footer:"Small steps. Gentle breaths. A little more calm."
+},
+hi:{
+brandSub:"तनाव प्रबंधन और ध्यान",language:"भाषा",
+welcome:"शांत मन, सुखी जीवन",intro:"थोड़ा रुकें, सहज साँस लें और मन को शांत होने का समय दें।",
+daily:"अपने लिए थोड़ा समय निकालना भी महत्वपूर्ण है।",
+medTitle:"ध्यान",medDesc:"आराम से बैठें और पाँच मिनट अपनी साँस पर ध्यान दें।",
+start:"शुरू करें",pause:"रोकें",resume:"फिर शुरू करें",reset:"रीसेट",
+medRunning:"आपका शांत समय शुरू हो गया है।",medPaused:"ध्यान रोक दिया गया है।",medDone:"पाँच मिनट पूरे हुए। अपने लिए समय निकालने के लिए शाबाश।",medReset:"टाइमर रीसेट हो गया।",
+breathTitle:"श्वास अभ्यास",breathDesc:"गोले के अनुसार साँस लें। साँस को ज़बरदस्ती न खींचें।",
+ready:"तैयार",inhale:"धीरे साँस अंदर लें",exhale:"धीरे साँस बाहर छोड़ें",startBreath:"अभ्यास शुरू करें",stop:"रोकें",
+breathStopped:"श्वास अभ्यास रोक दिया गया है।",checkTitle:"तनाव की जाँच",checkDesc:"इस समय आप कितना तनाव महसूस कर रहे हैं?",stressLevel:"तनाव स्तर",low:"शांत (0)",high:"बहुत तनाव (10)",save:"जाँच सहेजें",
+saved:"आपकी जाँच इसी डिवाइस पर सहेजी गई।",last:"आखिरी बार सहेजा गया: ",none:"अभी तक कोई जाँच सहेजी नहीं गई।",
+routineTitle:"दैनिक शांति अभ्यास",routineDesc:"आज के लिए छोटे और आसान कदम चुनें।",
+task1:"सचेत होकर पाँच साँसें लें",task2:"थोड़ा टहलें या स्ट्रेच करें",task3:"स्क्रीन से कुछ समय का विराम लें",task4:"किसी भरोसेमंद व्यक्ति से बात करें",
+routineProgress:"आज पूरे किए गए कदम: ",aboutTitle:"ManShanti के बारे में",
+aboutText:"ManShanti रोज़मर्रा के जीवन के लिए सरल स्वास्थ्य गतिविधियाँ प्रदान करता है। हर व्यक्ति की प्रगति अलग होती है; सब कुछ पूरी तरह करना ज़रूरी नहीं।",
+safetyTitle:"एक ज़रूरी सूचना",safetyText:"यह ऐप सामान्य स्वास्थ्य शिक्षा के लिए है, निदान या उपचार का विकल्प नहीं। तनाव लगातार बना रहे या असहनीय हो, तो योग्य मानसिक स्वास्थ्य विशेषज्ञ से बात करें। तत्काल खतरे में स्थानीय आपातकालीन सेवाओं से संपर्क करें।",
+footer:"छोटे कदम। सहज साँसें। थोड़ा अधिक सुकून।"
+},
+gu:{
+brandSub:"તણાવ વ્યવસ્થાપન અને ધ્યાન",language:"ભાષા",
+welcome:"શાંત મન, સુખી જીવન",intro:"થોડી ક્ષણ થોભો, હળવેથી શ્વાસ લો અને મનને શાંત થવા દો.",
+daily:"તમારા માટે થોડો સમય કાઢવો પણ મહત્વપૂર્ણ છે.",
+medTitle:"ધ્યાન",medDesc:"આરામથી બેસો અને પાંચ મિનિટ તમારા શ્વાસ પર ધ્યાન આપો.",
+start:"શરૂ કરો",pause:"થોભો",resume:"ફરી શરૂ કરો",reset:"રીસેટ",
+medRunning:"તમારી શાંતિની ક્ષણ શરૂ થઈ છે.",medPaused:"ધ્યાન થોભાવવામાં આવ્યું છે.",medDone:"પાંચ મિનિટ પૂર્ણ થઈ. તમારા માટે સમય કાઢવા બદલ અભિનંદન.",medReset:"ટાઈમર રીસેટ થયો.",
+breathTitle:"શ્વાસનો અભ્યાસ",breathDesc:"ગોળાના સંકેત પ્રમાણે શ્વાસ લો. શ્વાસને જબરદસ્તી ખેંચશો નહીં.",
+ready:"તૈયાર",inhale:"ધીમે શ્વાસ અંદર લો",exhale:"ધીમે શ્વાસ બહાર છોડો",startBreath:"અભ્યાસ શરૂ કરો",stop:"બંધ કરો",
+breathStopped:"શ્વાસનો અભ્યાસ બંધ થયો.",checkTitle:"તણાવની નોંધ",checkDesc:"આ ક્ષણે તમે કેટલો તણાવ અનુભવો છો?",stressLevel:"તણાવનું સ્તર",low:"શાંત (0)",high:"ખૂબ તણાવ (10)",save:"નોંધ સાચવો",
+saved:"તમારી નોંધ આ ઉપકરણમાં સાચવાઈ છે.",last:"છેલ્લે સાચવ્યું: ",none:"હજુ સુધી કોઈ નોંધ સાચવી નથી.",
+routineTitle:"રોજની શાંતિની દિનચર્યા",routineDesc:"આજ માટે નાના અને સરળ પગલાં પસંદ કરો.",
+task1:"ધ્યાનપૂર્વક પાંચ શ્વાસ લો",task2:"થોડું ચાલો અથવા સ્ટ્રેચ કરો",task3:"સ્ક્રીનથી થોડો વિરામ લો",task4:"વિશ્વાસુ વ્યક્તિ સાથે વાત કરો",
+routineProgress:"આજે પૂર્ણ કરેલાં પગલાં: ",aboutTitle:"ManShanti વિશે",
+aboutText:"ManShanti રોજિંદા જીવન માટે સરળ સુખાકારી પ્રવૃત્તિઓ આપે છે. દરેક વ્યક્તિની પ્રગતિ અલગ હોય છે; બધું સંપૂર્ણ રીતે કરવું જરૂરી નથી.",
+safetyTitle:"મહત્વપૂર્ણ સૂચના",safetyText:"આ એપ સામાન્ય સુખાકારી શિક્ષણ માટે છે, નિદાન કે સારવારનો વિકલ્પ નથી. તણાવ સતત રહે અથવા અસહ્ય લાગે તો લાયક માનસિક આરોગ્ય નિષ્ણાત સાથે વાત કરો. તાત્કાલિક જોખમમાં સ્થાનિક કટોકટી સેવાઓનો સંપર્ક કરો.",
+footer:"નાનાં પગલાં. હળવા શ્વાસ. થોડી વધુ શાંતિ."
+}
+};
+
+const $ = id => document.getElementById(id);
+let lang = "gu";
+let seconds = 300;
+let timerId = null;
+let medRunning = false;
+let breathId = null;
+let breathPhase = 0;
+let breathStart = null;
+
+function t(key){return translations[lang][key] || translations.en[key] || key;}
+
+function setLanguage(next){
+  lang = next;
+  document.documentElement.lang = next;
+  document.querySelectorAll("[data-i]").forEach(el=>{
+    const key = el.getAttribute("data-i");
+    if(translations[lang][key]) el.textContent = translations[lang][key];
+  });
+  $("startMeditation").textContent = medRunning ? t("pause") : t("start");
+  $("breathLabel").textContent = breathId ? t(breathPhase % 2 === 0 ? "inhale" : "exhale") : t("ready");
+  $("breathInstruction").textContent = breathId ? $("breathInstruction").textContent : "";
+  $("medStatus").textContent = "";
+  $("checkStatus").textContent = "";
+  updateTimer();
+  updateRoutine();
+  showLastCheck();
+}
+$("language").addEventListener("change",e=>setLanguage(e.target.value));
+
+function updateTimer(){
+  const m = Math.floor(seconds/60);
+  const s = seconds%60;
+  $("timer").textContent = String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+}
+function stopTimer(){
+  if(timerId) clearInterval(timerId);
+  timerId=null;
+  medRunning=false;
+}
+$("startMeditation").addEventListener("click",()=>{
+  if(medRunning){
+    stopTimer();
+    $("startMeditation").textContent=t("resume");
+    $("medStatus").textContent=t("medPaused");
+    return;
+  }
+  if(seconds<=0) seconds=300;
+  medRunning=true;
+  $("startMeditation").textContent=t("pause");
+  $("medStatus").textContent=t("medRunning");
+  timerId=setInterval(()=>{
+    seconds--;
+    updateTimer();
+    if(seconds<=0){
+      stopTimer();
+      seconds=0;
+      updateTimer();
+      $("startMeditation").textContent=t("start");
+      $("medStatus").textContent=t("medDone");
+    }
+  },1000);
+});
+$("resetMeditation").addEventListener("click",()=>{
+  stopTimer();
+  seconds=300;
+  updateTimer();
+  $("startMeditation").textContent=t("start");
+  $("medStatus").textContent=t("medReset");
+});
+
+function breathStep(){
+  const inhaleNow = breathPhase%2===0;
+  $("breathCircle").className="breath-circle "+(inhaleNow?"inhale":"exhale");
+  $("breathLabel").textContent=t(inhaleNow?"inhale":"exhale");
+  $("breathInstruction").textContent=inhaleNow?"1 · 2 · 3 · 4":"1 · 2 · 3 · 4";
+  breathPhase++;
+}
+$("startBreathing").addEventListener("click",()=>{
+  if(breathId) return;
+  breathPhase=0;
+  breathStep();
+  breathId=setInterval(breathStep,4000);
+  $("startBreathing").disabled=true;
+});
+$("stopBreathing").addEventListener("click",()=>{
+  if(breathId) clearInterval(breathId);
+  breathId=null;
+  $("startBreathing").disabled=false;
+  $("breathCircle").className="breath-circle";
+  $("breathLabel").textContent=t("ready");
+  $("breathInstruction").textContent=t("breathStopped");
+});
+
+$("stressRange").addEventListener("input",()=>{
+  $("stressValue").textContent=$("stressRange").value;
+});
+function showLastCheck(){
+  try{
+    const item=JSON.parse(localStorage.getItem("manshanti-checkin")||"null");
+    $("lastCheck").textContent=item?t("last")+item.value+"/10 · "+item.date:t("none");
+  }catch(e){$("lastCheck").textContent=t("none");}
+}
+$("saveCheckin").addEventListener("click",()=>{
+  const item={value:Number($("stressRange").value),date:new Date().toLocaleString()};
+  try{
+    localStorage.setItem("manshanti-checkin",JSON.stringify(item));
+    $("checkStatus").textContent=t("saved");
+    showLastCheck();
+  }catch(e){
+    $("checkStatus").textContent="Could not save on this device.";
+  }
+});
+
+function updateRoutine(){
+  let count=0;
+  ["task1","task2","task3","task4"].forEach(id=>{
+    const box=$(id);
+    try{box.checked=localStorage.getItem("manshanti-"+id)==="true";}catch(e){}
+    if(box.checked) count++;
+  });
+  $("routineStatus").textContent=t("routineProgress")+count+"/4";
+}
+["task1","task2","task3","task4"].forEach(id=>{
+  $(id).addEventListener("change",e=>{
+    try{localStorage.setItem("manshanti-"+id,e.target.checked?"true":"false");}catch(err){}
+    updateRoutine();
+  });
+});
+
+setLanguage("gu");
+updateTimer();
+showLastCheck();
+updateRoutine();
+</script>
+</body>
+</html>
